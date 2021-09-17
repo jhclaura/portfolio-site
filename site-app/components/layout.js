@@ -1,16 +1,28 @@
 import Alert from '../components/alert'
-import Footer from '../components/footer'
+import SideBar from '../components/sideBar'
 import Meta from '../components/meta'
+import { styled } from '../styles/index.js'
 
-export default function Layout({ preview, children }) {
+export default function Layout({
+  preview,
+  children,
+  projectSlugs,
+  explorationSlugs,
+}) {
   return (
     <>
       <Meta />
-      <div className="min-h-screen">
-        <Alert preview={preview} />
+      <SideBar
+        projectSlugs={projectSlugs}
+        explorationSlugs={explorationSlugs}
+      />
+      <Container>
         <main>{children}</main>
-      </div>
-      <Footer />
+      </Container>
     </>
   )
 }
+
+const Container = styled.div({
+  minHeight: '100vh',
+})

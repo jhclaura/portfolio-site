@@ -58,7 +58,7 @@ export default function Post({ data = {}, preview }) {
               <PostHeader
                 title={post.title}
                 coverImage={post.coverImage}
-                date={post.date}
+                date={post.publishedAt}
                 author={post.author}
               />
               <PostBody content={post.content} />
@@ -91,7 +91,7 @@ export async function getStaticProps({ params, preview = false }) {
 export async function getStaticPaths() {
   const paths = await sanityClient.fetch(postSlugsQuery)
   return {
-    paths: paths.map((slug) => ({ params: { slug } })),
+    paths: paths.map(slug => ({ params: { slug } })),
     fallback: true,
   }
 }

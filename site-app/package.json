@@ -6,13 +6,21 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@fancyapps/ui": "^4.0.0-beta.3",
     "@sanity/block-content-to-react": "2.0.7",
     "classnames": "2.3.1",
     "date-fns": "2.22.1",
+    "facepaint": "^1.2.1",
+    "get-video-id": "^3.2.0",
+    "groq": "^2.14.0",
     "next": "latest",
     "next-sanity": "0.3.0",
+    "next-sanity-image": "^3.1.5",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-player": "^2.9.0"
   },
   "devDependencies": {
     "autoprefixer": "10.2.6",
