@@ -52,9 +52,9 @@ const Project = ({ data = {}, preview }) => {
   const [previousProject, nextProject] = useMemo(() => {
     const allSlugs = allProjectSlugs.concat(allExplorationSlugs)
     const allSlugCurrents = allSlugs.map(slug => slug.slug)
-    console.log(allSlugCurrents)
+    // console.log(allSlugCurrents)
     const { previous, next } = findPreviousAndNextPosts(slug, allSlugCurrents)
-    console.log(allSlugs[previous].slug, allSlugs[next].slug)
+    // console.log(allSlugs[previous].slug, allSlugs[next].slug)
     return [
       previous > -1 ? allSlugs[previous].slug : undefined,
       next > -1 ? allSlugs[next].slug : undefined,

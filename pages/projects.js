@@ -14,7 +14,6 @@ import { theme, styled, mq, spaces } from '../styles/index.js'
 import ProjectCard from '../components/projectCard'
 
 export default function Index({ allProjects, preview, portfolio }) {
-  console.log(allProjects)
   return (
     <ThemeProvider theme={theme}>
       <Layout preview={preview} projectSlugs={portfolio}>
