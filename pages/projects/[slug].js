@@ -42,7 +42,7 @@ const Project = ({ data = {}, preview }) => {
 
   const slug = data?.project?.slug
   const {
-    data: { project, allProjectSlugs, allExplorationSlugs },
+    data: { project, allProjectSlugs },
   } = usePreviewSubscription(projectQuery, {
     params: { slug },
     initialData: data,
@@ -50,16 +50,15 @@ const Project = ({ data = {}, preview }) => {
   })
 
   const [previousProject, nextProject] = useMemo(() => {
-    const allSlugs = allProjectSlugs.concat(allExplorationSlugs)
-    const allSlugCurrents = allSlugs.map(slug => slug.slug)
+    const allSlugCurrents = allProjectSlugs.map(slug => slug.slug)
     // console.log(allSlugCurrents)
     const { previous, next } = findPreviousAndNextPosts(slug, allSlugCurrents)
     // console.log(allSlugs[previous].slug, allSlugs[next].slug)
     return [
-      previous > -1 ? allSlugs[previous].slug : undefined,
-      next > -1 ? allSlugs[next].slug : undefined,
+      previous > -1 ? allProjectSlugs[previous].slug : undefined,
+      next > -1 ? allProjectSlugs[next].slug : undefined,
     ]
-  }, [slug, allProjectSlugs, allExplorationSlugs])
+  }, [slug, allProjectSlugs])
 
   if (!router.isFallback && !slug) {
     return <ErrorPage statusCode={404} />
@@ -125,11 +124,12 @@ const CardsContainer = styled.div({
 })
 
 export async function getStaticProps({ params, preview = false }) {
-  const { project, allProjectSlugs, allExplorationSlugs } = await getClient(
-    preview,
-  ).fetch(projectQuery, {
-    slug: params.slug,
-  })
+  const { project, allProjectSlugs } = await getClient(preview).fetch(
+    projectQuery,
+    {
+      slug: params.slug,
+    },
+  )
 
   return {
     props: {
@@ -137,7 +137,6 @@ export async function getStaticProps({ params, preview = false }) {
       data: {
         project,
         allProjectSlugs,
-        allExplorationSlugs,
       },
     },
   }
@@ -145,6 +144,7 @@ export async function getStaticProps({ params, preview = false }) {
 
 export async function getStaticPaths() {
   const paths = await sanityClient.fetch(projectSlugsQuery)
+
   return {
     paths: paths.map(slug => ({ params: { slug } })),
     fallback: true,

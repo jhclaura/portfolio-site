@@ -3,12 +3,7 @@ import { ThemeProvider } from '@emotion/react'
 
 import Container from '../components/container'
 import Layout from '../components/layout'
-import {
-  allProjectsQuery,
-  projectFullSlugsQuery,
-  explorationFullSlugsQuery,
-  allIndexSlugsQuery,
-} from '../lib/queries'
+import { allProjectsQuery, allIndexSlugsQuery } from '../lib/queries'
 import { getClient } from '../lib/sanity.server'
 import { theme, styled, mq, spaces } from '../styles/index.js'
 import ProjectCard from '../components/projectCard'
