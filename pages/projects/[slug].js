@@ -50,10 +50,11 @@ const Project = ({ data = {}, preview }) => {
   })
 
   const [previousProject, nextProject] = useMemo(() => {
+    if (!allProjectSlugs) {
+      return [undefined, undefined]
+    }
     const allSlugCurrents = allProjectSlugs.map(slug => slug.slug)
-    // console.log(allSlugCurrents)
     const { previous, next } = findPreviousAndNextPosts(slug, allSlugCurrents)
-    // console.log(allSlugs[previous].slug, allSlugs[next].slug)
     return [
       previous > -1 ? allProjectSlugs[previous].slug : undefined,
       next > -1 ? allProjectSlugs[next].slug : undefined,
@@ -144,7 +145,7 @@ export async function getStaticProps({ params, preview = false }) {
 
 export async function getStaticPaths() {
   const paths = await sanityClient.fetch(projectSlugsQuery)
-
+  console.log('paths', paths)
   return {
     paths: paths.map(slug => ({ params: { slug } })),
     fallback: true,
