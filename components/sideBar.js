@@ -38,30 +38,8 @@ const SideBar = ({ projectSlugs, explorationSlugs }) => {
           )}
 
           <LinkContainer>
-            {/* <LinkButton
-              path={'/explorations'}
-              name={'Explorations'}
-              currentPathname={router.asPath}
-            /> */}
-            Explorations
-          </LinkContainer>
-
-          {explorationSlugs && (
-            <SubButtonContainer>
-              {explorationSlugs.map((s, i) => (
-                <LinkButton
-                  key={`p_sub_${i}`}
-                  path={`/projects/${s.slug}`}
-                  name={s.title}
-                  currentPathname={router.asPath}
-                />
-              ))}
-            </SubButtonContainer>
-          )}
-
-          <LinkContainer>
             <LinkButton
-              path={'/about'}
+              path={'/pages/about'}
               name={'About'}
               currentPathname={router.asPath}
             />

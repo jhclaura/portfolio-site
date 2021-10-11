@@ -1,25 +1,15 @@
 import Head from 'next/head'
 import Container from '../components/container'
 import Layout from '../components/layout'
-import {
-  projectFullSlugsQuery,
-  explorationFullSlugsQuery,
-} from '../lib/queries'
+import { allIndexSlugsQuery } from '../lib/queries'
 import { getClient, overlayDrafts } from '../lib/sanity.server'
 import { ThemeProvider } from '@emotion/react'
 import { theme } from '../styles/index.js'
 
-export default function Index({
-  allProjectSlugs,
-  allExplorationSlugs,
-  preview,
-}) {
+export default function Index({ portfolio, preview }) {
   return (
     <ThemeProvider theme={theme}>
-      <Layout
-        preview={preview}
-        projectSlugs={allProjectSlugs}
-        explorationSlugs={allExplorationSlugs}>
+      <Layout preview={preview} projectSlugs={portfolio}>
         <Head>
           <title>Laura Juo-Hsin Chen</title>
         </Head>
@@ -41,11 +31,8 @@ export default function Index({
 }
 
 export async function getStaticProps({ preview = false }) {
-  const allProjectSlugs = await getClient(preview).fetch(projectFullSlugsQuery)
-  const allExplorationSlugs = await getClient(preview).fetch(
-    explorationFullSlugsQuery,
-  )
+  const { portfolio } = await getClient(preview).fetch(allIndexSlugsQuery)
   return {
-    props: { allProjectSlugs, allExplorationSlugs, preview },
+    props: { portfolio, preview },
   }
 }

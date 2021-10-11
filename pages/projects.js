@@ -7,24 +7,17 @@ import {
   allProjectsQuery,
   projectFullSlugsQuery,
   explorationFullSlugsQuery,
+  allIndexSlugsQuery,
 } from '../lib/queries'
 import { getClient } from '../lib/sanity.server'
 import { theme, styled, mq, spaces } from '../styles/index.js'
 import ProjectCard from '../components/projectCard'
 
-export default function Index({
-  allProjects,
-  allProjectSlugs,
-  preview,
-  allExplorationSlugs,
-}) {
+export default function Index({ allProjects, preview, portfolio }) {
   console.log(allProjects)
   return (
     <ThemeProvider theme={theme}>
-      <Layout
-        preview={preview}
-        projectSlugs={allProjectSlugs}
-        explorationSlugs={allExplorationSlugs}>
+      <Layout preview={preview} projectSlugs={portfolio}>
         <Head>
           <title>Laura Juo-Hsin Chen</title>
         </Head>
@@ -57,11 +50,8 @@ const CardsContainer = styled.div(
 
 export async function getStaticProps({ preview = false }) {
   const allProjects = await getClient(preview).fetch(allProjectsQuery)
-  const allProjectSlugs = await getClient(preview).fetch(projectFullSlugsQuery)
-  const allExplorationSlugs = await getClient(preview).fetch(
-    explorationFullSlugsQuery,
-  )
+  const { portfolio } = await getClient(preview).fetch(allIndexSlugsQuery)
   return {
-    props: { allProjects, preview, allProjectSlugs, allExplorationSlugs },
+    props: { allProjects, preview, portfolio },
   }
 }

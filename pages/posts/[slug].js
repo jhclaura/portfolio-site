@@ -10,11 +10,21 @@ import SectionSeparator from '../../components/section-separator'
 import Layout from '../../components/layout'
 import PostTitle from '../../components/post-title'
 import { CMS_NAME } from '../../lib/constants'
-import { postQuery, postSlugsQuery } from '../../lib/queries'
+import {
+  postQuery,
+  postSlugsQuery,
+  allIndexSlugsQuery,
+} from '../../lib/queries'
 import { urlForImage, usePreviewSubscription } from '../../lib/sanity'
 import { sanityClient, getClient, overlayDrafts } from '../../lib/sanity.server'
 
-export default function Post({ data = {}, preview }) {
+export default function Post({
+  data = {},
+  preview,
+  portfolio,
+  explorations,
+  archive,
+}) {
   const router = useRouter()
 
   const slug = data?.post?.slug
@@ -31,7 +41,11 @@ export default function Post({ data = {}, preview }) {
   }
 
   return (
-    <Layout preview={preview}>
+    <Layout
+      preview={preview}
+      projectSlugs={portfolio}
+      explorationSlugs={explorations}
+      archiveSlugs={archive}>
       <Container>
         <Header />
         {router.isFallback ? (
@@ -40,9 +54,7 @@ export default function Post({ data = {}, preview }) {
           <>
             <article>
               <Head>
-                <title>
-                  {post.title} | Next.js Blog Example with {CMS_NAME}
-                </title>
+                <title>{post.title}</title>
                 {post.coverImage && (
                   <meta
                     key="ogImage"
@@ -76,6 +88,9 @@ export async function getStaticProps({ params, preview = false }) {
   const { post, morePosts } = await getClient(preview).fetch(postQuery, {
     slug: params.slug,
   })
+  const { portfolio, explorations, archive } = await getClient(preview).fetch(
+    allIndexSlugsQuery,
+  )
 
   return {
     props: {
@@ -84,6 +99,9 @@ export async function getStaticProps({ params, preview = false }) {
         post,
         morePosts: overlayDrafts(morePosts),
       },
+      portfolio,
+      explorations,
+      archive,
     },
   }
 }
