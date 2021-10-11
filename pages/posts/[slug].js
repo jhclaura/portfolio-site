@@ -18,13 +18,7 @@ import {
 import { urlForImage, usePreviewSubscription } from '../../lib/sanity'
 import { sanityClient, getClient, overlayDrafts } from '../../lib/sanity.server'
 
-export default function Post({
-  data = {},
-  preview,
-  portfolio,
-  explorations,
-  archive,
-}) {
+export default function Post({ data = {}, preview, portfolio }) {
   const router = useRouter()
 
   const slug = data?.post?.slug
@@ -41,11 +35,7 @@ export default function Post({
   }
 
   return (
-    <Layout
-      preview={preview}
-      projectSlugs={portfolio}
-      explorationSlugs={explorations}
-      archiveSlugs={archive}>
+    <Layout preview={preview} projectSlugs={portfolio}>
       <Container>
         <Header />
         {router.isFallback ? (
@@ -88,9 +78,7 @@ export async function getStaticProps({ params, preview = false }) {
   const { post, morePosts } = await getClient(preview).fetch(postQuery, {
     slug: params.slug,
   })
-  const { portfolio, explorations, archive } = await getClient(preview).fetch(
-    allIndexSlugsQuery,
-  )
+  const { portfolio } = await getClient(preview).fetch(allIndexSlugsQuery)
 
   return {
     props: {
@@ -100,8 +88,6 @@ export async function getStaticProps({ params, preview = false }) {
         morePosts: overlayDrafts(morePosts),
       },
       portfolio,
-      explorations,
-      archive,
     },
   }
 }
