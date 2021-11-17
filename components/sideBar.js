@@ -1,73 +1,52 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { styled, colors, spaces, mq } from '../styles'
+import { isMobile } from 'react-device-detect'
+import Div100vh from 'react-div-100vh'
+import { styled, spaces, mq } from '../styles'
+import LinkButton from './LinkButton'
+import TitleHeader from './titleHeader'
 
-const SideBar = ({ projectSlugs, explorationSlugs }) => {
+const SideBar = ({ projectSlugs }) => {
   const router = useRouter()
+
   return (
-    <Container>
-      <div>
-        <ul>
-          <LinkContainer>
-            <LinkButton
-              path={'/'}
-              name={'Laura Juo-Hsin Chen'}
-              currentPathname={router.asPath}
-            />
-          </LinkContainer>
+    <SidebarContainer isMobile={isMobile}>
+      <TitleHeader />
 
-          <LinkContainer>
-            <LinkButton
-              path={'/projects'}
-              name={'Projects'}
-              currentPathname={router.asPath}
-            />
-          </LinkContainer>
+      <List>
+        <LinkContainer>
+          <div>Selected projects</div>
+        </LinkContainer>
 
-          {projectSlugs && (
-            <SubButtonContainer>
-              {projectSlugs.map((s, i) => (
-                <LinkButton
-                  key={`p_sub_${i}`}
-                  path={`/projects/${s.slug}`}
-                  name={s.title}
-                  currentPathname={router.asPath}
-                />
-              ))}
-            </SubButtonContainer>
-          )}
+        {projectSlugs && (
+          <SubButtonContainer>
+            {projectSlugs.map((s, i) => (
+              <LinkButton
+                key={`p_sub_${i}`}
+                path={`/projects/${s.slug}`}
+                name={s.title}
+                currentPathname={router.asPath}
+              />
+            ))}
+          </SubButtonContainer>
+        )}
 
-          <LinkContainer>
-            <LinkButton
-              path={'/pages/about'}
-              name={'About'}
-              currentPathname={router.asPath}
-            />
-          </LinkContainer>
-        </ul>
-      </div>
-    </Container>
+        <LinkContainer>
+          <LinkButton
+            path={'/pages/about'}
+            name={'About'}
+            currentPathname={router.asPath}
+          />
+        </LinkContainer>
+      </List>
+    </SidebarContainer>
   )
 }
 
-const LinkButton = ({ path, name, currentPathname }) => {
-  return (
-    <li>
-      <Link href={path}>
-        <Button isCurrent={path === currentPathname}>{name}</Button>
-      </Link>
-    </li>
-  )
-}
-
-const Container = styled.div(
+const SidebarContainer = styled(Div100vh)(
   {
-    height: '100vh',
     position: 'fixed',
     top: 0,
     left: 0,
-    width: 300,
-    paddingRight: 400,
     overflowY: 'auto',
     overflowX: 'hidden',
     msOverflowStyle: 'none',
@@ -75,22 +54,25 @@ const Container = styled.div(
     '::-webkit-scrollbar': {
       display: 'none',
     },
+    backgroundColor: 'white',
   },
   mq({
     padding: spaces.small,
-    paddingRight: 0,
+    paddingLeft: [40, 20],
+    width: ['30vw', '100vw'],
+    // display: isMobile ? 'unset' : ['unset', 'none'],
   }),
 )
+
+const List = styled.ul({
+  paddingTop: 30,
+})
 
 const LinkContainer = styled.ol(
   mq({
     paddingBottom: spaces.small,
   }),
 )
-
-const Button = styled.a({ color: colors.green, marginBottom: 5 }, props => ({
-  color: props.isCurrent ? props.theme.highlightColor : 'black',
-}))
 
 const SubButtonContainer = styled.ol({
   listStyle: 'decimal',

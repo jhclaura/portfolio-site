@@ -3,20 +3,11 @@ import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import { useMemo } from 'react'
 import Container from '../../components/container'
-import PostBody from '../../components/post-body'
-import MoreStories from '../../components/more-stories'
-import Header from '../../components/header'
-import PostHeader from '../../components/post-header'
-import SectionSeparator from '../../components/section-separator'
 import Layout from '../../components/layout'
 import PostTitle from '../../components/post-title'
-import { CMS_NAME } from '../../lib/constants'
 import { projectQuery, projectSlugsQuery } from '../../lib/queries'
 import { urlForImage, usePreviewSubscription } from '../../lib/sanity'
-import { sanityClient, getClient, overlayDrafts } from '../../lib/sanity.server'
-import SanityImage from '../../components/sanityImage'
-import ProjectCard from '../../components/projectCard'
-import { styled } from '../../styles'
+import { sanityClient, getClient } from '../../lib/sanity.server'
 import ProjectContent from '../../components/projectContent'
 
 const findPreviousAndNextPosts = (slug, allSlugs) => {
@@ -95,34 +86,13 @@ const Project = ({ data = {}, preview }) => {
                 previousProject={previousProject}
                 nextProject={nextProject}
               />
-              {/* <div>{project.title}</div>
-              <SanityImage
-                title={project.title}
-                imageData={project.mainImage}
-              />
-              <PostBody content={project.content} /> */}
             </article>
-            {/* <SectionSeparator />
-            <CardsContainer>
-              {moreProjects.map((p, i) => (
-                <ProjectCard key={`p_c_${i}`} {...p} />
-              ))}
-            </CardsContainer> */}
           </>
         )}
       </Container>
     </Layout>
   )
 }
-
-const CardsContainer = styled.div({
-  display: 'flex',
-  flex: 1,
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  paddingTop: 70,
-  justifyContent: 'center',
-})
 
 export async function getStaticProps({ params, preview = false }) {
   const { project, allProjectSlugs } = await getClient(preview).fetch(

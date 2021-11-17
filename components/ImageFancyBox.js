@@ -9,6 +9,7 @@ const ImageFancyBox = props => {
     const opts = props.options || {}
 
     Fancybox.bind(delegate, opts)
+    Fancybox.defaults.Hash = false
 
     return () => {
       Fancybox.destroy()

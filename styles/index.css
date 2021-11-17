@@ -51,6 +51,21 @@ a:link {
 }
 
 a:hover {
-  border-bottom: 1px solid rgba(127, 127, 127, 1);
+  border-bottom: 1px solid #00d3c1;
   text-decoration: none !important;
+}
+
+/* If the screen size is 601px wide or more, set the font-size of <div> to 80px */
+/* @media screen and (min-width: 601px) {
+  body {
+    font-size: 80px;
+  }
+} */
+
+/* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
+@media screen and (max-width: 600px) {
+  body {
+    font-size: 1.1em;
+    line-height: 1.45;
+  }
 }

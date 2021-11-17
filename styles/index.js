@@ -61,10 +61,15 @@ export const typography = {
     fontSize: ['22px', '16px'],
     lineHeight: [1.3],
   }),
+  smallMono: mq({
+    fontFamily: fonts.mono,
+    fontSize: ['16px', '14px'],
+    lineHeight: [1.3],
+  }),
   tinyMono: mq({
     fontFamily: fonts.mono,
-    fontSize: ['14px', '12px'],
-    lineHeight: [1.3],
+    fontSize: ['14px', '15px'],
+    lineHeight: [1.3, 1.4],
   }),
 }
 

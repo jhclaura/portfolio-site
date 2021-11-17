@@ -1,14 +1,11 @@
-import Date from '../components/date'
-import CoverImage from './cover-image'
 import SanityImage from './sanityImage'
 import Link from 'next/link'
-import { styled, colors } from '../styles'
+import { styled, colors, typography, mq } from '../styles'
 
-const ProjectCard = ({ title, mainImage, categories, slug }) => {
+const ProjectCard = ({ title, mainImage, categories, categorySlugs, slug }) => {
   return (
     <Container>
       <Link href={`/projects/${slug}`}>
-        {/* <a aria-label={title}> */}
         <ImageContainer>
           <SanityImage
             slug={slug}
@@ -18,7 +15,6 @@ const ProjectCard = ({ title, mainImage, categories, slug }) => {
             objectFit={'cover'}
           />
         </ImageContainer>
-        {/* </a> */}
       </Link>
 
       <Title>
@@ -29,7 +25,11 @@ const ProjectCard = ({ title, mainImage, categories, slug }) => {
       <CategoriesContainer>
         {categories &&
           categories.map((c, i) => (
-            <Category key={`categories${i}`}>{`#${c.toLowerCase()}`}</Category>
+            <Link
+              key={`categories${i}`}
+              href={`/projects?tag=${categorySlugs[i]}`}>
+              <Category>{`#${c.toLowerCase()}`}</Category>
+            </Link>
           ))}
       </CategoriesContainer>
     </Container>
@@ -39,36 +39,50 @@ const ProjectCard = ({ title, mainImage, categories, slug }) => {
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  paddingLeft: 60,
+  paddingLeft: 40,
+  paddingRight: 40,
   paddingBottom: 40,
 })
 
-const ImageContainer = styled.div({
-  position: 'relative',
-  width: 220,
-  height: (220 / 4) * 3,
-  // aspectRatio: 4 / 3,
-  // minHeight: (300 / 4) * 3,
-  borderBottom: 'none',
-  cursor: 'pointer',
-})
+const ImageContainer = styled.div(
+  {
+    position: 'relative',
+    borderBottom: 'none',
+    cursor: 'pointer',
+  },
+  mq({
+    width: [220, '90vw'],
+    height: [(220 / 4) * 3, 'calc(90vw * (3/4))'],
+  }),
+)
 
-const CategoriesContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-})
+const CategoriesContainer = styled.div(
+  {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  mq({
+    width: [220, '90vw'],
+  }),
+)
 
-const Category = styled.div({
-  paddingRight: 10,
-  fontFamily: 'Cutive Mono',
-  fontWeight: 300,
-  fontSize: 14,
+const Category = styled.a(typography.tinyMono, {
+  marginRight: 10,
   color: colors.grey,
+  borderBottom: 'none',
+  '&:hover': {
+    color: colors.green,
+    borderBottom: 'none',
+  },
 })
 
-const Title = styled.h3({
-  width: 220,
-})
+const Title = styled.h3(
+  {},
+  mq({
+    width: [220, '90vw'],
+  }),
+)
 
 const TitleText = styled.a({
   cursor: 'pointer',

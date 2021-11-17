@@ -1,58 +1,289 @@
 import BlockContent from '@sanity/block-content-to-react'
 import ReactPlayer from 'react-player'
+import { useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 
-import Date from './date'
-import CoverImage from './cover-image'
 import SanityImage from './sanityImage'
 import Link from 'next/link'
 import { styled, colors, typography, mq, spaces } from '../styles'
 import ImageFancyBox from './ImageFancyBox'
+import { sanityConfig } from '../lib/config'
+import { urlForImage } from '../lib/sanity'
+import Carousel from './carousel'
+import { CategoriesContainer, Category } from './textComponents'
 
-const serializers = {
+const leftColumnSerializer = {
+  types: {
+    block: props => {
+      const { style = 'normal' } = props.node
+      if (style === 'normal') {
+        return <Paragraph>{props.children}</Paragraph>
+      } else if (style === 'metadata') {
+        return <MetadataParagraph>{props.children}</MetadataParagraph>
+      }
+      return BlockContent.defaultSerializers.types.block(props)
+    },
+    image: props => {
+      if (props.node.width && props.node.height)
+        return (
+          <SanityImage
+            title={props.node.alt}
+            imageData={props.node}
+            layout={'fixed'}
+            width={props.node.width}
+            height={props.node.height}
+            objectFit="contain"
+          />
+        )
+      else
+        return (
+          <SanityImage
+            title={props.node.alt}
+            imageData={props.node}
+            layout={'fixed'}
+            width={150}
+            height={150}
+            objectFit="contain"
+          />
+        )
+    },
+  },
+}
+
+const rigthColumnSerializer = {
   types: {
     video: ({ node }) => {
-      const { url } = node
-      return (
-        <PlayerWrapper>
-          <ReactPlayer
-            url={url}
-            width="100%"
-            height="100%"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-            }}
-            config={{
-              vimeo: {
-                playerOptions: {
-                  controls: true,
-                },
-              },
-            }}
-          />
-        </PlayerWrapper>
-      )
+      return <VideoWithCaption video={node} />
     },
     block: props => {
       const { style = 'normal' } = props.node
       if (style === 'normal') {
         return <Paragraph>{props.children}</Paragraph>
+      } else if (style === 'metadata') {
+        return <MetadataParagraph>{props.children}</MetadataParagraph>
       }
       return BlockContent.defaultSerializers.types.block(props)
+    },
+    image: props => {
+      return <ImageWithCaption image={props.node} />
+    },
+    imageBlock: props => {
+      const { images } = props.node
+      return (
+        <ImageBLockContainer>
+          <ThumbImageBlockContainer>
+            {images.map((img, index) => (
+              <ThumbImageContainer
+                key={`imgBlock${index}`}
+                paddingRight={images.length > 1 && index !== images.length - 1}
+                paddingLeft={images.length > 1 && index !== 0}>
+                <Image image={img} />
+              </ThumbImageContainer>
+            ))}
+          </ThumbImageBlockContainer>
+          <ImageCaptionOffsetContainer>
+            <ImageCaptionContainer>
+              <ImageCaption>{props.node.caption}</ImageCaption>
+            </ImageCaptionContainer>
+          </ImageCaptionOffsetContainer>
+        </ImageBLockContainer>
+      )
+    },
+    flickr: ({ node }) => {
+      const { url, previewImage } = node
+      return (
+        <ColumnsContainer>
+          <RightColumnContainer>
+            <a data-flickr-embed="true" data-header="true" href={url}>
+              <img src={previewImage} />
+            </a>
+            <script
+              async
+              src="//embedr.flickr.com/assets/client-code.js"
+              charSet="utf-8"
+            />
+          </RightColumnContainer>
+        </ColumnsContainer>
+      )
     },
   },
 }
 
-const MetadataBlockRenderer = props => {
-  const { style = 'normal' } = props.node
-
-  if (style === 'normal') {
-    return <Metadata>{props.children}</Metadata>
-  }
-
-  // Fall back to default handling
-  return BlockContent.defaultSerializers.types.block(props)
+const serializers = {
+  types: {
+    image: props => {
+      return (
+        <ColumnsContainer>
+          <ImageCaptionOffsetContainer>
+            <ImageCaptionContainer>
+              <ImageCaption>{props.node.caption}</ImageCaption>
+            </ImageCaptionContainer>
+          </ImageCaptionOffsetContainer>
+          <ImageItemContainer>
+            <ImageButton
+              data-fancybox="gallery"
+              data-src={urlForImage(props.node)}
+              data-caption={props.node.caption}
+              className="button button--secondary">
+              {props.node.width && props.node.height ? (
+                <SanityImage
+                  title={props.node.alt}
+                  imageData={props.node}
+                  layout={'fixed'}
+                  width={props.node.width}
+                  height={props.node.height}
+                  objectFit="contain"
+                />
+              ) : (
+                <SanityImage title={props.node.alt} imageData={props.node} />
+              )}
+            </ImageButton>
+          </ImageItemContainer>
+        </ColumnsContainer>
+      )
+    },
+    imageSlide: props => {
+      return (
+        <ColumnsContainer>
+          <CarouselContainer>
+            <Carousel
+              slides={props.node.images.map((image, index) => (
+                <div
+                  className="carousel__slide"
+                  style={{ width: '80%' }}
+                  key={`c_slide${index}`}>
+                  <SlideImageButton
+                    data-fancybox="gallery-slides"
+                    data-src={urlForImage(image)}
+                    data-caption={image.caption}
+                    className="button button--secondary">
+                    <SanityImage
+                      title={image.alt}
+                      imageData={image}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </SlideImageButton>
+                </div>
+              ))}
+            />
+          </CarouselContainer>
+        </ColumnsContainer>
+      )
+    },
+    video: ({ node }) => {
+      const { url } = node
+      return (
+        <ColumnsContainer>
+          <RightColumnContainer>
+            <PlayerWrapper>
+              <ReactPlayer
+                url={url}
+                width="100%"
+                height="100%"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                }}
+                config={{
+                  vimeo: {
+                    playerOptions: {
+                      controls: true,
+                    },
+                  },
+                }}
+              />
+            </PlayerWrapper>
+          </RightColumnContainer>
+        </ColumnsContainer>
+      )
+    },
+    block: props => {
+      const { style = 'normal' } = props.node
+      if (style === 'normal') {
+        return (
+          <ColumnsContainer>
+            {/* <LeftColumnContainer /> */}
+            <RightColumnContainer>
+              <Paragraph>{props.children}</Paragraph>
+            </RightColumnContainer>
+          </ColumnsContainer>
+        )
+      }
+      return BlockContent.defaultSerializers.types.block(props)
+    },
+    contentColumns: ({ node }) => {
+      const { columns, withDivider } = node
+      return (
+        <SectionContainer withDivider={withDivider}>
+          {columns.map((column, index) => (
+            <SectionColumnsContainer key={index}>
+              <LeftColumnContainer>
+                {column.title && (
+                  <BlockContent
+                    blocks={column.title}
+                    serializers={leftColumnSerializer}
+                    projectId={sanityConfig.projectId}
+                    dataset={sanityConfig.dataset}
+                  />
+                )}
+              </LeftColumnContainer>
+              <RightColumnContainer>
+                {column.body && (
+                  <BlockContent
+                    blocks={column.body}
+                    serializers={rigthColumnSerializer}
+                    projectId={sanityConfig.projectId}
+                    dataset={sanityConfig.dataset}
+                  />
+                )}
+              </RightColumnContainer>
+            </SectionColumnsContainer>
+          ))}
+        </SectionContainer>
+      )
+    },
+    imageBlock: props => {
+      const { images } = props.node
+      return (
+        <ImageBLockContainer>
+          <ThumbImageBlockContainer>
+            {images.map((img, index) => (
+              <ThumbImageContainer
+                key={`imgBlock${index}`}
+                paddingRight={images.length > 1 && index !== images.length - 1}
+                paddingLeft={images.length > 1 && index !== 0}>
+                <Image image={img} />
+              </ThumbImageContainer>
+            ))}
+          </ThumbImageBlockContainer>
+          <ImageCaptionOffsetContainer>
+            <ImageCaptionContainer>
+              <ImageCaption>{props.node.caption}</ImageCaption>
+            </ImageCaptionContainer>
+          </ImageCaptionOffsetContainer>
+        </ImageBLockContainer>
+      )
+    },
+    flickr: ({ node }) => {
+      const { url, previewImage } = node
+      return (
+        <ColumnsContainer>
+          <RightColumnContainer>
+            <a data-flickr-embed="true" data-header="true" href={url}>
+              <img src={previewImage} />
+            </a>
+            <script
+              async
+              src="//embedr.flickr.com/assets/client-code.js"
+              charSet="utf-8"
+            />
+          </RightColumnContainer>
+        </ColumnsContainer>
+      )
+    },
+  },
 }
 
 const ProjectContent = (project = {}) => {
@@ -60,47 +291,74 @@ const ProjectContent = (project = {}) => {
     <>
       <TitleContainer>
         <Title>
-          <Link href={`/projects/${project.previousProject}`}>
+          {/* <Link href={`/projects/${project.previousProject}`}>
             <LeftArrow>{'<'}</LeftArrow>
-          </Link>
-          {project.title}
+          </Link> */}
+          <div>{project.title}</div>
           <Link href={`/projects/${project.nextProject}`}>
             <RightArrow>{'>'}</RightArrow>
           </Link>
         </Title>
       </TitleContainer>
 
-      <Container>
-        {project.content && (
-          <BlockContent blocks={project.content} serializers={serializers} />
-        )}
+      <ImageFancyBox
+        options={{
+          infinite: false,
+          // Carousel: {
+          //   on: {
+          //     change: that => {
+          //       mainCarousel.slideTo(mainCarousel.findPageForSlide(that.page), {
+          //         friction: 0,
+          //       })
+          //     },
+          //   },
+          // },
+        }}>
+        <Container>
+          {project.content && (
+            <BlockContent
+              blocks={project.content}
+              serializers={serializers}
+              projectId={sanityConfig.projectId}
+              dataset={sanityConfig.dataset}
+            />
+          )}
 
-        <ImageContainer>
-          <SanityImage title={project.title} imageData={project.mainImage} />
-        </ImageContainer>
-
-        {project.images && project.images.length > 0 && (
-          <ImageFancyBox options={{ infinite: false }}>
+          {project.images && project.images.length > 0 && (
             <ThumbImageButtonContainer>
               {project.images.map((image, index) => {
                 if (image._type === 'image')
                   return (
-                    <ThumbImageButton
-                      key={index}
-                      data-fancybox="gallery"
-                      data-src={image.url}
-                      className="button button--secondary">
-                      <ThumbImageContainer>
-                        <SanityImage imageData={image} />
-                      </ThumbImageContainer>
-                    </ThumbImageButton>
+                    <ThumbImageContainer key={`thumbImg${index}`}>
+                      <SectionColumnsContainer key={index}>
+                        <LeftColumnContainer></LeftColumnContainer>
+                        <RightColumnForImageContainer>
+                          <ImageCaptionOffsetContainer>
+                            <ImageCaptionContainer>
+                              <ImageCaption>{image.caption}</ImageCaption>
+                            </ImageCaptionContainer>
+                          </ImageCaptionOffsetContainer>
+
+                          <ImageItemContainer>
+                            <ImageButton
+                              key={index}
+                              data-fancybox="gallery"
+                              data-src={image.url}
+                              data-caption={image.caption}
+                              className="button button--secondary">
+                              <SanityImage imageData={image} />
+                            </ImageButton>
+                          </ImageItemContainer>
+                        </RightColumnForImageContainer>
+                      </SectionColumnsContainer>
+                    </ThumbImageContainer>
                   )
-                else if (image._type === 'imageBlock')
+                else if (image.images)
                   return (
                     <ThumbImageBlockContainer>
                       {image.images.map((img, imgIndex) => (
-                        <ThumbImageButton
-                          key={imgIndex}
+                        <ImageButton
+                          key={`imgButton${imgIndex}`}
                           data-fancybox="gallery"
                           data-src={img.url}
                           className="button button--secondary">
@@ -112,31 +370,42 @@ const ProjectContent = (project = {}) => {
                             paddingLeft={
                               image.images.length > 1 && imgIndex !== 0
                             }>
-                            <SanityImage imageData={img} />
+                            {imgIndex === 0 ? (
+                              <ImageWithCaption image={img} />
+                            ) : (
+                              <SanityImage imageData={img} />
+                            )}
                           </ThumbImageContainer>
-                        </ThumbImageButton>
+                        </ImageButton>
                       ))}
                     </ThumbImageBlockContainer>
                   )
               })}
             </ThumbImageButtonContainer>
-          </ImageFancyBox>
-        )}
+          )}
 
-        {project.metadata && (
-          <BlockContent
-            blocks={project.metadata}
-            // serializers={{ types: { block: MetadataBlockRenderer } }}
-          />
-        )}
-      </Container>
+          {project.caseStudy && (
+            <>
+              <MakingOfTitle>
+                <div>{`Making Of ${project.title}`}</div>
+              </MakingOfTitle>
+              <BlockContent
+                blocks={project.caseStudy}
+                serializers={serializers}
+                projectId={sanityConfig.projectId}
+                dataset={sanityConfig.dataset}
+              />
+            </>
+          )}
+        </Container>
+      </ImageFancyBox>
 
       <TitleContainer>
         <Title>
-          <Link href={`/projects/${project.previousProject}`}>
+          {/* <Link href={`/projects/${project.previousProject}`}>
             <LeftArrow>{'<'}</LeftArrow>
-          </Link>
-          {project.title}
+          </Link> */}
+          <div>{project.title}</div>
           <Link href={`/projects/${project.nextProject}`}>
             <RightArrow>{'>'}</RightArrow>
           </Link>
@@ -146,104 +415,323 @@ const ProjectContent = (project = {}) => {
   )
 }
 
+const Image = ({ image }) => {
+  return (
+    <ImageItemContainer>
+      <ImageButton
+        data-fancybox="gallery"
+        data-src={urlForImage(image)}
+        data-caption={image.caption}
+        className="button button--secondary">
+        {image.width && image.height ? (
+          <SanityImage
+            title={image.alt}
+            imageData={image}
+            layout={'fixed'}
+            width={image.width}
+            height={image.height}
+            objectFit="contain"
+          />
+        ) : (
+          <SanityImage title={image.alt} imageData={image} />
+        )}
+      </ImageButton>
+    </ImageItemContainer>
+  )
+}
+
+const ImageWithCaption = ({ image }) => {
+  return (
+    <ColumnsContainer>
+      <ImageItemContainer>
+        <ImageButton
+          data-fancybox="gallery"
+          data-src={urlForImage(image)}
+          data-caption={image.caption}
+          className="button button--secondary">
+          {image.width && image.height ? (
+            <SanityImage
+              title={image.alt}
+              imageData={image}
+              layout={'fixed'}
+              width={image.width}
+              height={image.height}
+              objectFit="contain"
+            />
+          ) : (
+            <SanityImage title={image.alt} imageData={image} />
+          )}
+        </ImageButton>
+      </ImageItemContainer>
+
+      <ImageCaptionOffsetContainer>
+        <ImageCaptionContainer>
+          <ImageCaption>{image.caption}</ImageCaption>
+        </ImageCaptionContainer>
+      </ImageCaptionOffsetContainer>
+    </ColumnsContainer>
+  )
+}
+
+const VideoWithCaption = ({ video }) => {
+  const isNative = useMemo(() => {
+    return (
+      video.url.search('facebook') === -1 &&
+      video.url.search('vimeo') === -1 &&
+      video.url.search('youtube') === -1
+    )
+  }, [video.url])
+
+  return (
+    <ColumnsContainer>
+      <ImageItemContainer>
+        <PlayerWrapper isNative={isNative}>
+          <ReactPlayer
+            url={video.url}
+            width="100%"
+            height="auto"
+            playsinline={true}
+            playing={isMobile ? false : true}
+            config={{
+              vimeo: {
+                playerOptions: {
+                  controls: true,
+                },
+              },
+              file: {
+                attributes: {
+                  muted: true,
+                  loop: true,
+                  autoplay: true,
+                  controls: isMobile ? true : false,
+                },
+              },
+            }}
+          />
+        </PlayerWrapper>
+      </ImageItemContainer>
+
+      <ImageCaptionOffsetContainer>
+        <ImageCaptionContainer>
+          <ImageCaption>{video.caption}</ImageCaption>
+        </ImageCaptionContainer>
+      </ImageCaptionOffsetContainer>
+    </ColumnsContainer>
+  )
+}
+
+const TitleContainer = styled.div(
+  {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 'auto',
+  },
+  mq({
+    paddingTop: 20,
+    paddingRight: [60, 20],
+    paddingLeft: [60, 20],
+  }),
+)
+
 const Container = styled.div(
   {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: 800,
-    marginLeft: 'auto',
+    margin: 'auto',
   },
   mq({
-    padding: spaces.small,
+    paddingBottom: [60, 20],
+    paddingRight: [60, 20],
+    paddingLeft: [60, 20],
   }),
 )
-
-const TitleContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-})
 
 const Title = styled.div(
-  typography.smallSans,
-  { width: 800, marginLeft: 'auto', position: 'relative', textAlign: 'center' },
-  mq({
-    padding: spaces.small,
-  }),
-)
-
-const LeftArrow = styled.a({
-  position: 'absolute',
-  left: -10,
-})
-
-const RightArrow = styled.a({
-  position: 'absolute',
-  right: -10,
-})
-
-const Metadata = styled.div(typography.tinyMono, {
-  fontWeight: 300,
-  paddingBottom: 10,
-})
-
-const CategoriesContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-})
-
-const Category = styled.div({
-  paddingRight: 10,
-  fontFamily: 'Cutive Mono',
-  fontWeight: 300,
-  fontSize: 14,
-  color: colors.grey,
-})
-
-const PlayerWrapper = styled.div(
   {
-    position: 'relative',
-    paddingTop: `${100 / (1280 / 720)}%`,
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 24,
+    justifyContent: 'space-between',
+    borderBottom: '1px solid',
   },
-  mq({
-    marginBottom: spaces.small,
-  }),
-)
-
-const ImageContainer = styled.div(
-  {},
   mq({
     paddingBottom: spaces.small,
   }),
 )
 
-const Paragraph = styled.div({
-  paddingBottom: 10,
+const MakingOfTitle = styled.div(
+  {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 24,
+    justifyContent: 'space-between',
+    borderBottom: '1px solid',
+  },
+  mq({
+    paddingTop: 360,
+    paddingBottom: spaces.small,
+  }),
+)
+
+const LeftArrow = styled.a({
+  position: 'absolute',
+  left: 10,
 })
+
+const RightArrow = styled.a({})
+
+const PlayerWrapper = styled.div(
+  {
+    position: 'relative',
+    display: 'flex',
+    flex: 1,
+  },
+  props => ({
+    paddingTop: props.isNative ? 0 : `${100 / (1280 / 720)}%`,
+  }),
+)
+
+const SectionContainer = styled.div(
+  {
+    paddingTop: 30,
+    // paddingBottom: 15,
+  },
+  props => ({
+    borderTop: props.withDivider ? '1px solid' : 'none',
+    marginTop: props.withDivider ? 30 : 0,
+  }),
+)
+
+const ColumnsContainer = styled.div(
+  {
+    display: 'flex',
+    flex: 1,
+    position: 'relative',
+  },
+  mq({
+    flexDirection: ['row', 'column'],
+  }),
+)
+
+const SectionColumnsContainer = styled(ColumnsContainer)(
+  mq({
+    paddingBottom: spaces.small,
+  }),
+)
+
+const LeftColumnContainer = styled.div({
+  flex: 1,
+})
+
+const RightColumnContainer = styled.div({ flex: 2.5 })
+
+const RightColumnForImageContainer = styled(RightColumnContainer)({
+  position: 'relative',
+  flexDirection: 'row',
+})
+
+const ImageBLockContainer = styled.div(
+  {
+    display: 'flex',
+    position: 'relative',
+  },
+  mq({
+    flexDirection: ['row', 'column'],
+  }),
+)
+
+const ImageCaptionOffsetContainer = styled.div(
+  {
+    display: 'flex',
+  },
+  mq({
+    paddingBottom: 5,
+    paddingTop: 5,
+    position: ['absolute', 'relative'],
+    width: [150, 'unset'],
+    height: ['100%', 'unset'],
+    left: [-150, 'unset'],
+  }),
+)
+
+const ImageCaptionContainer = styled.div(
+  {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+  },
+  mq({
+    justifyContent: ['flex-end', 'center'],
+    alignItems: ['flex-end', 'center'],
+  }),
+)
+
+const ImageCaption = styled.div(
+  typography.tinyMono,
+  { whiteSpace: 'pre-wrap' },
+  mq({
+    paddingRight: [20, 0],
+    textAlign: ['right', 'center'],
+  }),
+)
+
+const ImageItemContainer = styled(RightColumnContainer)(
+  { display: 'flex' },
+  mq({
+    paddingBottom: 5,
+    paddingTop: 5,
+  }),
+)
+
+const Paragraph = styled.div({
+  paddingBottom: 20,
+})
+
+const MetadataParagraph = styled(Paragraph)(typography.tinyMono)
 
 const ThumbImageBlockContainer = styled.div({
   display: 'flex',
+  flex: 1,
   flexDirection: 'row',
 })
 
 const ThumbImageButtonContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  // flexWrap: 'wrap',
   flex: 1,
 })
 
-const ThumbImageButton = styled.button({
+const ImageButton = styled.button({
   flex: 1,
+  border: 'none',
+})
+
+const SlideImageButton = styled.button({
+  border: 'none',
+  position: 'relative',
+  width: '100%',
+  height: 450,
 })
 
 const ThumbImageContainer = styled.div(
-  {},
+  { flex: 1 },
   mq({
-    paddingBottom: spaces.small,
+    // paddingBottom: spaces.small,
   }),
   props => ({
-    paddingRight: props.paddingRight ? 10 : 0,
-    paddingLeft: props.paddingLeft ? 10 : 0,
+    paddingRight: props.paddingRight ? 5 : 0,
+    paddingLeft: props.paddingLeft ? 5 : 0,
+  }),
+)
+
+const CarouselContainer = styled.div(
+  {
+    flex: 1,
+  },
+  mq({
+    paddingBottom: spaces.small,
   }),
 )
 
