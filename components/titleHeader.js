@@ -16,12 +16,7 @@ const TitleHeader = () => {
   )
 }
 
-const Container = styled.div(
-  {},
-  mq({
-    // paddingBottom: 30,
-  }),
-)
+const Container = styled.div({})
 
 const Button = styled.a(
   {

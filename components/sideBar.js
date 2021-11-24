@@ -13,9 +13,9 @@ const SideBar = ({ projectSlugs }) => {
       <TitleHeader />
 
       <List>
-        <LinkContainer>
-          <div>Selected projects</div>
-        </LinkContainer>
+        {/* <LinkContainer>
+          <div>Projects</div>
+        </LinkContainer> */}
 
         {projectSlugs && (
           <SubButtonContainer>
@@ -57,10 +57,8 @@ const SidebarContainer = styled(Div100vh)(
     backgroundColor: 'white',
   },
   mq({
-    padding: spaces.small,
-    paddingLeft: [40, 20],
+    padding: ['20px 20px 20px 40px', '15px 20px 20px'],
     width: ['30vw', '100vw'],
-    // display: isMobile ? 'unset' : ['unset', 'none'],
   }),
 )
 

@@ -36,13 +36,13 @@ const ProjectCards = ({ projects, currentTag }) => {
 const TagsContainer = styled.div(
   {
     display: 'flex',
-    height: 50,
     maxWidth: (220 + 80) * 3,
     margin: 'auto',
     justifyContent: 'space-between',
   },
   mq({
-    paddingTop: 20,
+    height: [50, 30],
+    paddingTop: [20, 10],
     paddingLeft: [40, 20],
     paddingRight: [40, 20],
   }),
@@ -63,7 +63,7 @@ const CardsContainer = styled.div(
     justifyContent: 'center',
   },
   mq({
-    paddingTop: spaces.medium,
+    paddingTop: [40, 10],
     paddingBottom: spaces.medium,
   }),
 )

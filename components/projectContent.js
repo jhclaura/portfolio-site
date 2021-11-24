@@ -5,12 +5,11 @@ import { isMobile } from 'react-device-detect'
 
 import SanityImage from './sanityImage'
 import Link from 'next/link'
-import { styled, colors, typography, mq, spaces } from '../styles'
+import { styled, colors, typography, mq, spaces, fonts } from '../styles'
 import ImageFancyBox from './ImageFancyBox'
 import { sanityConfig } from '../lib/config'
 import { urlForImage } from '../lib/sanity'
 import Carousel from './carousel'
-import { CategoriesContainer, Category } from './textComponents'
 
 const leftColumnSerializer = {
   types: {
@@ -51,6 +50,24 @@ const leftColumnSerializer = {
 }
 
 const rigthColumnSerializer = {
+  marks: {
+    internalLink: ({ mark, children }) => {
+      const { slug = {} } = mark
+      const href = `/${slug.current}`
+      return <a href={href}>{children}</a>
+    },
+    link: ({ mark, children }) => {
+      // Read https://css-tricks.com/use-target_blank/
+      const { blank, href } = mark
+      return blank ? (
+        <a href={href} target="_blank" rel="noopener">
+          {children}
+        </a>
+      ) : (
+        <a href={href}>{children}</a>
+      )
+    },
+  },
   types: {
     video: ({ node }) => {
       return <VideoWithCaption video={node} />
@@ -110,37 +127,27 @@ const rigthColumnSerializer = {
 }
 
 const serializers = {
+  marks: {
+    internalLink: ({ mark, children }) => {
+      const { slug = {} } = mark
+      const href = `/${slug.current}`
+      return <a href={href}>{children}</a>
+    },
+    link: ({ mark, children }) => {
+      // Read https://css-tricks.com/use-target_blank/
+      const { blank, href } = mark
+      return blank ? (
+        <a href={href} target="_blank" rel="noopener">
+          {children}
+        </a>
+      ) : (
+        <a href={href}>{children}</a>
+      )
+    },
+  },
   types: {
     image: props => {
-      return (
-        <ColumnsContainer>
-          <ImageCaptionOffsetContainer>
-            <ImageCaptionContainer>
-              <ImageCaption>{props.node.caption}</ImageCaption>
-            </ImageCaptionContainer>
-          </ImageCaptionOffsetContainer>
-          <ImageItemContainer>
-            <ImageButton
-              data-fancybox="gallery"
-              data-src={urlForImage(props.node)}
-              data-caption={props.node.caption}
-              className="button button--secondary">
-              {props.node.width && props.node.height ? (
-                <SanityImage
-                  title={props.node.alt}
-                  imageData={props.node}
-                  layout={'fixed'}
-                  width={props.node.width}
-                  height={props.node.height}
-                  objectFit="contain"
-                />
-              ) : (
-                <SanityImage title={props.node.alt} imageData={props.node} />
-              )}
-            </ImageButton>
-          </ImageItemContainer>
-        </ColumnsContainer>
-      )
+      return <ImageWithCaption image={props.node} />
     },
     imageSlide: props => {
       return (
@@ -173,22 +180,35 @@ const serializers = {
     },
     video: ({ node }) => {
       const { url } = node
+      const isNative = useMemo(() => {
+        return (
+          url.search('facebook') === -1 &&
+          url.search('vimeo') === -1 &&
+          url.search('youtube') === -1 &&
+          url.search('youtu.be') === -1
+        )
+      }, [url])
       return (
         <ColumnsContainer>
           <RightColumnContainer>
-            <PlayerWrapper>
+            <PlayerWrapper isNative={isNative}>
               <ReactPlayer
                 url={url}
                 width="100%"
-                height="100%"
+                height={isNative ? 'auto' : '100%'}
                 style={{
-                  position: 'absolute',
+                  position: isNative ? 'relative' : 'absolute',
                   top: 0,
                   left: 0,
                 }}
                 config={{
                   vimeo: {
                     playerOptions: {
+                      controls: true,
+                    },
+                  },
+                  file: {
+                    attributes: {
                       controls: true,
                     },
                   },
@@ -207,6 +227,20 @@ const serializers = {
             {/* <LeftColumnContainer /> */}
             <RightColumnContainer>
               <Paragraph>{props.children}</Paragraph>
+            </RightColumnContainer>
+          </ColumnsContainer>
+        )
+      } else if (style === 'blockquote') {
+        return (
+          <ColumnsContainer>
+            {/* <LeftColumnContainer /> */}
+            <RightColumnContainer>
+              <Paragraph>
+                <Quote>
+                  <QuoteMark>“</QuoteMark>
+                  <blockquote>{props.children}</blockquote>
+                </Quote>
+              </Paragraph>
             </RightColumnContainer>
           </ColumnsContainer>
         )
@@ -304,15 +338,6 @@ const ProjectContent = (project = {}) => {
       <ImageFancyBox
         options={{
           infinite: false,
-          // Carousel: {
-          //   on: {
-          //     change: that => {
-          //       mainCarousel.slideTo(mainCarousel.findPageForSlide(that.page), {
-          //         friction: 0,
-          //       })
-          //     },
-          //   },
-          // },
         }}>
         <Container>
           {project.content && (
@@ -330,8 +355,11 @@ const ProjectContent = (project = {}) => {
                 if (image._type === 'image')
                   return (
                     <ThumbImageContainer key={`thumbImg${index}`}>
-                      <SectionColumnsContainer key={index}>
-                        <LeftColumnContainer></LeftColumnContainer>
+                      <ColumnsContainer key={index}>
+                        {image.caption && (
+                          <LeftColumnContainer></LeftColumnContainer>
+                        )}
+
                         <RightColumnForImageContainer>
                           <ImageCaptionOffsetContainer>
                             <ImageCaptionContainer>
@@ -350,7 +378,7 @@ const ProjectContent = (project = {}) => {
                             </ImageButton>
                           </ImageItemContainer>
                         </RightColumnForImageContainer>
-                      </SectionColumnsContainer>
+                      </ColumnsContainer>
                     </ThumbImageContainer>
                   )
                 else if (image.images)
@@ -478,7 +506,8 @@ const VideoWithCaption = ({ video }) => {
     return (
       video.url.search('facebook') === -1 &&
       video.url.search('vimeo') === -1 &&
-      video.url.search('youtube') === -1
+      video.url.search('youtube') === -1 &&
+      video.url.search('youtu.be') === -1
     )
   }, [video.url])
 
@@ -489,7 +518,12 @@ const VideoWithCaption = ({ video }) => {
           <ReactPlayer
             url={video.url}
             width="100%"
-            height="auto"
+            height={isNative ? 'auto' : '100%'}
+            style={{
+              position: isNative ? 'relative' : 'absolute',
+              top: 0,
+              left: 0,
+            }}
             playsinline={true}
             playing={isMobile ? false : true}
             config={{
@@ -503,7 +537,7 @@ const VideoWithCaption = ({ video }) => {
                   muted: true,
                   loop: true,
                   autoplay: true,
-                  controls: isMobile ? true : false,
+                  controls: true,
                 },
               },
             }}
@@ -690,6 +724,20 @@ const Paragraph = styled.div({
 })
 
 const MetadataParagraph = styled(Paragraph)(typography.tinyMono)
+
+const Quote = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  fontFamily: fonts.ballpoint,
+  fontSize: 17,
+})
+
+const QuoteMark = styled.div({
+  fontSize: 60,
+  lineHeight: 0.5,
+  paddingRight: 5,
+  color: 'darkgray',
+})
 
 const ThumbImageBlockContainer = styled.div({
   display: 'flex',

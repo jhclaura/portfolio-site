@@ -2,6 +2,8 @@ export const fonts = {
   sansSerif: 'HelveticaNeue',
   serif: 'Lora',
   mono: 'Inconsolata',
+  classic: 'Zen Old Mincho',
+  ballpoint: 'Zen Kurenaido',
 }
 
 export const colors = {
