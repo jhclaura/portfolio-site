@@ -1,16 +1,40 @@
 import Link from 'next/link'
 import { styled, colors, mq } from '../styles'
 
-const LinkButton = ({ path, name, currentPathname, isTitle }) => {
+const LinkButton = ({ path, name, currentPathname, isTitle, url }) => {
   return (
     <li>
-      <Link href={path}>
-        {isTitle ? (
-          <TitleButton isCurrent={path === currentPathname}>{name}</TitleButton>
-        ) : (
-          <Button isCurrent={path === currentPathname}>{name}</Button>
-        )}
-      </Link>
+      {url ? (
+        <>
+          {isTitle ? (
+            <TitleButton
+              isCurrent={path === currentPathname}
+              href={url}
+              target="_blank">
+              {name}
+            </TitleButton>
+          ) : (
+            <Button
+              isCurrent={path === currentPathname}
+              href={url}
+              target="_blank">
+              {name}
+            </Button>
+          )}
+        </>
+      ) : (
+        <>
+          <Link href={path}>
+            {isTitle ? (
+              <TitleButton isCurrent={path === currentPathname}>
+                {name}
+              </TitleButton>
+            ) : (
+              <Button isCurrent={path === currentPathname}>{name}</Button>
+            )}
+          </Link>
+        </>
+      )}
     </li>
   )
 }

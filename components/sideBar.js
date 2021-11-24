@@ -1,9 +1,12 @@
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { isMobile } from 'react-device-detect'
 import Div100vh from 'react-div-100vh'
 import { styled, spaces, mq } from '../styles'
 import LinkButton from './LinkButton'
 import TitleHeader from './titleHeader'
+import twitterLogo from '../public/twitter.jpg'
+import igLogo from '../public/ig.jpg'
 
 const SideBar = ({ projectSlugs }) => {
   const router = useRouter()
@@ -13,10 +16,6 @@ const SideBar = ({ projectSlugs }) => {
       <TitleHeader />
 
       <List>
-        {/* <LinkContainer>
-          <div>Projects</div>
-        </LinkContainer> */}
-
         {projectSlugs && (
           <SubButtonContainer>
             {projectSlugs.map((s, i) => (
@@ -37,6 +36,26 @@ const SideBar = ({ projectSlugs }) => {
             currentPathname={router.asPath}
           />
         </LinkContainer>
+
+        <LinkContainer>
+          <LinkButton
+            url={'https://archive.jhclaura.com'}
+            name={'Archive: 2013-2020'}
+            currentPathname={router.asPath}
+          />
+          <LinkButton
+            url={'https://archive-itp.jhclaura.com'}
+            name={'Archive: ITP'}
+            currentPathname={router.asPath}
+          />
+        </LinkContainer>
+
+        <SocialIcon href="https://twitter.com/jhclaura" target="_blank">
+          <Image src="/twitter.jpg" alt="Twitter" width="30" height="30" />
+        </SocialIcon>
+        <SocialIcon href="https://www.instagram.com/jhclaura/" target="_blank">
+          <Image src="/ig.jpg" alt="Instagram" width="30" height="30" />
+        </SocialIcon>
       </List>
     </SidebarContainer>
   )
@@ -75,6 +94,15 @@ const LinkContainer = styled.ol(
 const SubButtonContainer = styled.ol({
   listStyle: 'decimal',
   padding: '0px 10px 20px 60px',
+})
+
+const SocialIcon = styled.a({
+  '&:link': {
+    borderBottom: 'none',
+  },
+  '&:hover': {
+    borderBottom: 'none',
+  },
 })
 
 export default SideBar

@@ -1,9 +1,9 @@
 import BlockContent from '@sanity/block-content-to-react'
 import ReactPlayer from 'react-player'
 
-import { styled, colors, typography, mq, spaces } from '../styles'
-import ImageFancyBox from './ImageFancyBox'
+import { styled, mq, spaces } from '../styles'
 import { sanityConfig } from '../lib/config'
+import { TitleContainer, Container } from './sharedComponents'
 
 const serializers = {
   types: {
@@ -62,28 +62,18 @@ const PageContent = (page = {}) => {
   )
 }
 
-const Container = styled.div(
+const Title = styled.div(
   {
     display: 'flex',
-    flexDirection: 'column',
-    maxWidth: 800,
-    marginLeft: 'auto',
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 24,
+    justifyContent: 'space-between',
+    borderBottom: '1px solid',
   },
   mq({
-    padding: spaces.small,
-  }),
-)
-
-const TitleContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-})
-
-const Title = styled.div(
-  typography.smallSans,
-  { width: 800, marginLeft: 'auto', position: 'relative', textAlign: 'center' },
-  mq({
-    padding: spaces.small,
+    paddingBottom: spaces.small,
+    marginBottom: spaces.small,
   }),
 )
 
