@@ -1,0 +1,77 @@
+
+@font-face {
+	font-family: StupidFont;
+		src: url(../font/Stupid.ttf);
+}
+body {
+	background-color: #ffffff;
+	margin: 0;
+	/*overflow: hidden;*/
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	z-index: 100;
+}
+
+h1, h2{	
+	font-family: StupidFont;
+	text-align: center;
+}
+
+h1{
+	font-size: 3em;
+	margin-bottom: 5px;
+}
+
+h2{
+	font-size: 2em;
+}
+
+p{
+	/*margin-left: 20em;
+	margin-right: 20em;*/
+	margin-left: 20%;
+	margin-right: 20%;
+	text-align: justify;
+}
+
+a:link {
+    color: #000;
+}
+
+a:visited {
+    color: #000;
+}
+
+a:hover {
+    background-color: #ffffaa;
+}
+
+::selection {
+	background: #dff6f4;
+}
+
+::-moz-selection {
+	background: #dff6f4;
+}
+
+#info {
+	color: #999;
+	text-align: center;
+}
+
+#footer {
+	font-family: StupidFont;
+	text-align: center;
+	font-size: 1.5em;
+	margin-top: 2em;
+	padding-left: 0.5em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	background-color: #dff6f4;
+}
+
+#instructions{
+	position: absolute;
+	right: 15px;
+    top: 10px;
+}
