@@ -32,7 +32,7 @@ export default function Meta() {
       <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
       <meta name="theme-color" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
-      <meta name="description" content={`Laura Juo-Hsin Chen's site.`} />
+      <meta name="description" content={`Laura Juo-Hsin Chen is an immersive experience developer, designer, and doodler from Taiwan. She is interested in weird human interactions and how they shift participants’ perspective.`} />
       <meta property="og:image" content={HOME_OG_IMAGE_URL} key="ogImage" />
     </Head>
   )
