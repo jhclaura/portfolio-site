@@ -33,7 +33,7 @@ export default function Meta() {
       <meta name="theme-color" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <meta name="description" content={`Laura Juo-Hsin Chen is an immersive experience developer, designer, and doodler from Taiwan. She is interested in weird human interactions and how they shift participants’ perspective.`} />
-      <meta property="og:image" content={HOME_OG_IMAGE_URL} key="ogImage" />
+      <meta property="og:image" content={`${window.location.origin}${HOME_OG_IMAGE_URL}`} key="ogImage" />
     </Head>
   )
 }
