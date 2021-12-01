@@ -11,6 +11,7 @@ import { projectQuery, projectSlugsQuery } from '../../lib/queries'
 import { urlForImage, usePreviewSubscription } from '../../lib/sanity'
 import { sanityClient, getClient } from '../../lib/sanity.server'
 import ProjectContent from '../../components/projectContent'
+import { HOST } from '../../lib/constants'
 
 const findPreviousAndNextPosts = (slug, allSlugs) => {
   if (!slug || !allSlugs) return { previous: -1, next: -1 }
@@ -65,7 +66,7 @@ const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
         description={metaExcerpt}
         // canonical="https://www.canonical.ie/"
         openGraph={{
-          url: `${router.asPath}`,
+          url: `${HOST}${router.asPath}`,
           images: [
             {
               url: `${urlForImage(metaImage)
