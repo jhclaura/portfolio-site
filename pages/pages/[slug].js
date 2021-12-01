@@ -96,7 +96,7 @@ export async function getStaticProps({ params, preview = false }) {
       },
       portfolio,
       metaTitle: page.title,
-      metaImage: page.mainImage,
+      metaImage: page.coverImage,
       metaExcerpt: page.excerpt,
     },
   }
