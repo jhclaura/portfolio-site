@@ -1,10 +1,9 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
+import { NextSeo } from 'next-seo'
+
 import Container from '../../components/container'
-import PageBody from '../../components/pageBody'
-import Header from '../../components/header'
-import PageHeader from '../../components/pageHeader'
 import Layout from '../../components/layout'
 import PostTitle from '../../components/post-title'
 import {
@@ -15,8 +14,16 @@ import {
 import { urlForImage, usePreviewSubscription } from '../../lib/sanity'
 import { sanityClient, getClient, overlayDrafts } from '../../lib/sanity.server'
 import PageContent from '../../components/pageContent'
+import { HOST } from '../../lib/constants'
 
-export default function Page({ data = {}, preview, portfolio }) {
+export default function Page({
+  data = {},
+  preview,
+  portfolio,
+  metaTitle,
+  metaImage,
+  metaExcerpt,
+}) {
   const router = useRouter()
 
   const slug = data?.page?.slug
@@ -33,35 +40,44 @@ export default function Page({ data = {}, preview, portfolio }) {
   }
 
   return (
-    <Layout preview={preview} projectSlugs={portfolio}>
-      <Container>
-        {/* <Header /> */}
-        {router.isFallback ? (
-          <PostTitle>Loading…</PostTitle>
-        ) : (
-          <>
-            <article>
-              <Head>
-                <title>{page.title} | Laura Juo-Hsin Chen</title>
-                {/* {page.coverImage && (
-                  <meta
-                    key="ogImage"
-                    property="og:image"
-                    content={urlForImage(page.coverImage)
-                      .width(1200)
-                      .height(627)
-                      .fit('crop')
-                      .url()}
-                  />
-                )} */}
-              </Head>
-              {/* <PageHeader title={page.title} coverImage={page.coverImage} /> */}
-              <PageContent {...page} />
-            </article>
-          </>
-        )}
-      </Container>
-    </Layout>
+    <>
+      <NextSeo
+        title={`${metaTitle} | Laura Juo-Hsin Chen`}
+        description={metaExcerpt}
+        openGraph={{
+          url: `${HOST}${router.asPath}`,
+          images: [
+            {
+              url: `${urlForImage(metaImage)
+                .width(1200)
+                .height(627)
+                .fit('crop')
+                .url()}`,
+              width: 1200,
+              height: 627,
+              alt: `${metaTitle} Image`,
+              type: 'image/jpeg',
+            },
+          ],
+        }}
+      />
+      <Layout preview={preview} projectSlugs={portfolio}>
+        <Container>
+          {router.isFallback ? (
+            <PostTitle>Loading…</PostTitle>
+          ) : (
+            <>
+              <article>
+                <Head>
+                  <title>{page.title} | Laura Juo-Hsin Chen</title>
+                </Head>
+                <PageContent {...page} />
+              </article>
+            </>
+          )}
+        </Container>
+      </Layout>
+    </>
   )
 }
 
@@ -79,6 +95,9 @@ export async function getStaticProps({ params, preview = false }) {
         morePages: overlayDrafts(morePages),
       },
       portfolio,
+      metaTitle: page.title,
+      metaImage: page.mainImage,
+      metaExcerpt: page.excerpt,
     },
   }
 }

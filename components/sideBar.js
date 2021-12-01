@@ -5,8 +5,6 @@ import Div100vh from 'react-div-100vh'
 import { styled, spaces, mq } from '../styles'
 import LinkButton from './LinkButton'
 import TitleHeader from './titleHeader'
-import twitterLogo from '../public/twitter.jpg'
-import igLogo from '../public/ig.jpg'
 
 const SideBar = ({ projectSlugs }) => {
   const router = useRouter()
@@ -51,10 +49,20 @@ const SideBar = ({ projectSlugs }) => {
         </LinkContainer>
 
         <SocialIcon href="https://twitter.com/jhclaura" target="_blank">
-          <Image src="/twitter.jpg" alt="Twitter" width="30" height="30" />
+          <Image
+            src="/twitter.jpg"
+            alt="Twitter"
+            width={isMobile ? 50 : 30}
+            height={isMobile ? 50 : 30}
+          />
         </SocialIcon>
         <SocialIcon href="https://www.instagram.com/jhclaura/" target="_blank">
-          <Image src="/ig.jpg" alt="Instagram" width="30" height="30" />
+          <Image
+            src="/ig.jpg"
+            alt="Instagram"
+            width={isMobile ? 50 : 30}
+            height={isMobile ? 50 : 30}
+          />
         </SocialIcon>
       </List>
     </SidebarContainer>
