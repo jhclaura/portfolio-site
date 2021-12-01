@@ -65,7 +65,7 @@ const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
         description={metaExcerpt}
         // canonical="https://www.canonical.ie/"
         openGraph={{
-          // url: 'https://www.url.ie/a',
+          url: `${router.asPath}`,
           images: [
             {
               url: `${urlForImage(metaImage)
@@ -83,7 +83,7 @@ const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
         }}
         twitter={{
           handle: '@jhclaura',
-          // site: `${getUrl()}`,
+          site: `${router.asPath}`,
           cardType: 'summary',
         }}
       />
