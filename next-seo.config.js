@@ -18,6 +18,7 @@ export default {
     ],
   },
   twitter: {
+    handle: '@jhclaura',
     site: '@jhclaura',
     cardType: 'summary_large_image',
   },

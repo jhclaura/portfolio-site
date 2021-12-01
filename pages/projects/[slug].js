@@ -64,7 +64,6 @@ const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
       <NextSeo
         title={`${metaTitle} | Laura Juo-Hsin Chen`}
         description={metaExcerpt}
-        // canonical="https://www.canonical.ie/"
         openGraph={{
           url: `${HOST}${router.asPath}`,
           images: [
@@ -80,12 +79,6 @@ const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
               type: 'image/jpeg',
             },
           ],
-          // site_name: 'SiteName',
-        }}
-        twitter={{
-          handle: '@jhclaura',
-          site: `${router.asPath}`,
-          cardType: 'summary',
         }}
       />
       <Layout
@@ -151,7 +144,6 @@ export async function getStaticProps({ params, preview = false }) {
 
 export async function getStaticPaths() {
   const paths = await sanityClient.fetch(projectSlugsQuery)
-  console.log('paths', paths)
   return {
     paths: paths.map(slug => ({ params: { slug } })),
     fallback: true,
