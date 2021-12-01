@@ -30,7 +30,7 @@ const findPreviousAndNextPosts = (slug, allSlugs) => {
   return { previous: previousIndex, next: nextIndex }
 }
 
-const Project = ({ data = {}, preview }) => {
+const Project = ({ data = {}, preview, metaTitle, metaImage, metaExcerpt }) => {
   const router = useRouter()
 
   const slug = data?.project?.slug
@@ -61,21 +61,21 @@ const Project = ({ data = {}, preview }) => {
   return (
     <>
       <NextSeo
-        title={`${project.title} | Laura Juo-Hsin Chen`}
-        description={project.excerpt}
+        title={`${metaTitle} | Laura Juo-Hsin Chen`}
+        description={metaExcerpt}
         // canonical="https://www.canonical.ie/"
         openGraph={{
           // url: 'https://www.url.ie/a',
           images: [
             {
-              url: `${urlForImage(project.mainImage)
+              url: `${urlForImage(metaImage)
                 .width(1200)
                 .height(627)
                 .fit('crop')
                 .url()}`,
               width: 1200,
               height: 627,
-              alt: `${project.title} Image`,
+              alt: `${metaTitle} Image`,
               type: 'image/jpeg',
             },
           ],
@@ -141,6 +141,9 @@ export async function getStaticProps({ params, preview = false }) {
         project,
         allProjectSlugs,
       },
+      metaTitle: project.title,
+      metaImage: project.mainImage,
+      metaExcerpt: project.excerpt,
     },
   }
 }
