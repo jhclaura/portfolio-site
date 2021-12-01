@@ -4,6 +4,7 @@ export default {
     locale: 'en_IE',
     url: 'https://www.jhclaura.com/',
     site_name: 'Laura Juo-Hsin Chen',
+    title: 'Laura Juo-Hsin Chen',
     defaultTitle: 'Laura Juo-Hsin Chen',
     description: `Laura Juo-Hsin Chen is an immersive experience developer, designer, and doodler from Taiwan. She is interested in weird human interactions and how they shift participants’ perspective.`,
     images: [
