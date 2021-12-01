@@ -2,6 +2,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import { useMemo } from 'react'
+import { NextSeo } from 'next-seo'
+
 import Container from '../../components/container'
 import Layout from '../../components/layout'
 import PostTitle from '../../components/post-title'
@@ -57,40 +59,69 @@ const Project = ({ data = {}, preview }) => {
   }
 
   return (
-    <Layout
-      preview={preview}
-      projectSlugs={data?.allProjectSlugs}
-      explorationSlugs={data?.allExplorationSlugs}>
-      <Container>
-        {router.isFallback ? (
-          <PostTitle>Loading…</PostTitle>
-        ) : (
-          <>
-            <article>
-              <Head>
-                <title>{project.title} | Laura Juo-Hsin Chen</title>
-                {project.mainImage && (
-                  <meta
-                    key="ogImage"
-                    property="og:image"
-                    content={urlForImage(project.mainImage)
-                      .width(1200)
-                      .height(627)
-                      .fit('crop')
-                      .url()}
-                  />
-                )}
-              </Head>
-              <ProjectContent
-                {...project}
-                previousProject={previousProject}
-                nextProject={nextProject}
-              />
-            </article>
-          </>
-        )}
-      </Container>
-    </Layout>
+    <>
+      <NextSeo
+        title={`${project.title} | Laura Juo-Hsin Chen`}
+        description={project.excerpt}
+        // canonical="https://www.canonical.ie/"
+        openGraph={{
+          // url: 'https://www.url.ie/a',
+          images: [
+            {
+              url: `${urlForImage(project.mainImage)
+                .width(1200)
+                .height(627)
+                .fit('crop')
+                .url()}`,
+              width: 1200,
+              height: 627,
+              alt: `${project.title} Image`,
+              type: 'image/jpeg',
+            },
+          ],
+          // site_name: 'SiteName',
+        }}
+        // twitter={{
+        //   site: '@jhclaura',
+        //   cardType: 'summary_large_image',
+        // }}
+      />
+      <Layout
+        preview={preview}
+        projectSlugs={data?.allProjectSlugs}
+        explorationSlugs={data?.allExplorationSlugs}>
+        <Container>
+          {router.isFallback ? (
+            <PostTitle>Loading…</PostTitle>
+          ) : (
+            <>
+              <article>
+                <Head>
+                  <title>{project.title} | Laura Juo-Hsin Chen</title>
+                  {project.mainImage && (
+                    <meta
+                      key="ogImage"
+                      property="og:image"
+                      content={urlForImage(project.mainImage)
+                        .width(1200)
+                        .height(627)
+                        .fit('crop')
+                        .url()}
+                    />
+                  )}
+                </Head>
+
+                <ProjectContent
+                  {...project}
+                  previousProject={previousProject}
+                  nextProject={nextProject}
+                />
+              </article>
+            </>
+          )}
+        </Container>
+      </Layout>
+    </>
   )
 }
 
