@@ -81,10 +81,11 @@ const Project = ({ data = {}, preview }) => {
           ],
           // site_name: 'SiteName',
         }}
-        // twitter={{
-        //   site: '@jhclaura',
-        //   cardType: 'summary_large_image',
-        // }}
+        twitter={{
+          handle: '@jhclaura',
+          // site: `${getUrl()}`,
+          cardType: 'summary',
+        }}
       />
       <Layout
         preview={preview}
