@@ -144,6 +144,10 @@ const serializers = {
         <a href={href}>{children}</a>
       )
     },
+    color: ({ mark, children }) => {
+      const { hex } = mark
+      return <span style={{ color: hex }}>{children}</span>
+    },
   },
   types: {
     image: props => {
