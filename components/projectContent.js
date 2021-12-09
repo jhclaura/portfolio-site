@@ -629,6 +629,9 @@ const PlayerWrapper = styled.div(
   props => ({
     paddingTop: props.isNative ? 0 : `${100 / (1280 / 720)}%`,
   }),
+  mq({
+    marginBottom: [5, 10],
+  }),
 )
 
 const SectionContainer = styled.div(
