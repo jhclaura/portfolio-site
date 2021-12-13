@@ -23,7 +23,7 @@ export default function Layout({ preview, children, projectSlugs }) {
 
   // Show menu button dynamically on desktop
   useEffect(() => {
-    if (width === undefined) return
+    if (width === undefined || isMobile) return
 
     if (width < 800) {
       setShowMenu(true)
@@ -32,7 +32,7 @@ export default function Layout({ preview, children, projectSlugs }) {
       setShowMenu(false)
       setShowSideBar(true)
     }
-  }, [width])
+  }, [width, isMobile])
 
   // Close sidebar when path changes
   useEffect(() => {
