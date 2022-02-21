@@ -68,6 +68,20 @@ const rigthColumnSerializer = {
       )
     },
   },
+  list: props => {
+    const { type } = props
+    const bullet = type === 'bullet'
+    if (bullet) {
+      return <ul>{props.children}</ul>
+    }
+    return <ol>{props.children}</ol>
+  },
+  listItem: props => (
+    <li>
+      <Bullet>•</Bullet>
+      {props.children}
+    </li>
+  ),
   types: {
     video: ({ node }) => {
       return <VideoWithCaption video={node} />
@@ -744,6 +758,11 @@ const QuoteMark = styled.div({
   lineHeight: 0.5,
   paddingRight: 5,
   color: 'darkgray',
+})
+
+const Bullet = styled.span({
+  paddingLeft: 10,
+  paddingRight: 10,
 })
 
 const ThumbImageBlockContainer = styled.div({
