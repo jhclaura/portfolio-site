@@ -137,6 +137,24 @@ const rigthColumnSerializer = {
         </ColumnsContainer>
       )
     },
+    imageUrl: ({ node }) => {
+      const { url, caption } = node
+      return (
+        <ImageBLockContainer>
+          <ThumbImageBlockContainer>
+            <img
+              src={url}
+              style={{ width: '100%', paddingBottom: 5, paddingTop: 5 }}
+            />
+          </ThumbImageBlockContainer>
+          <ImageCaptionOffsetContainer>
+            <ImageCaptionContainer>
+              <ImageCaption>{caption}</ImageCaption>
+            </ImageCaptionContainer>
+          </ImageCaptionOffsetContainer>
+        </ImageBLockContainer>
+      )
+    },
   },
 }
 
@@ -333,6 +351,21 @@ const serializers = {
             />
           </RightColumnContainer>
         </ColumnsContainer>
+      )
+    },
+    imageUrl: ({ node }) => {
+      const { url, caption } = node
+      return (
+        <ImageBLockContainer>
+          <ThumbImageBlockContainer>
+            <img source={url} />
+          </ThumbImageBlockContainer>
+          <ImageCaptionOffsetContainer>
+            <ImageCaptionContainer>
+              <ImageCaption>{caption}</ImageCaption>
+            </ImageCaptionContainer>
+          </ImageCaptionOffsetContainer>
+        </ImageBLockContainer>
       )
     },
   },
