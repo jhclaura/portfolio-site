@@ -215,7 +215,7 @@ const serializers = {
       )
     },
     video: ({ node }) => {
-      const { url } = node
+      const { url, widthPercentage } = node
       const isNative = useMemo(() => {
         return (
           url.search('facebook') === -1 &&
@@ -230,7 +230,7 @@ const serializers = {
             <PlayerWrapper isNative={isNative}>
               <ReactPlayer
                 url={url}
-                width="100%"
+                width={widthPercentage ? widthPercentage + '%' : '100%'}
                 height={isNative ? 'auto' : '100%'}
                 style={{
                   position: isNative ? 'relative' : 'absolute',
@@ -564,16 +564,23 @@ const VideoWithCaption = ({ video }) => {
 
   return (
     <ColumnsContainer>
-      <ImageItemContainer>
+      <VideoItemContainer backgroundColor={video.backgroundColor?.hex}>
         <PlayerWrapper isNative={isNative}>
           <ReactPlayer
             url={video.url}
-            width="100%"
+            width={
+              video.widthPercentage
+                ? isMobile
+                  ? video.widthPercentage * 1.5 + '%'
+                  : video.widthPercentage + '%'
+                : '100%'
+            }
             height={isNative ? 'auto' : '100%'}
             style={{
               position: isNative ? 'relative' : 'absolute',
               top: 0,
               left: 0,
+              margin: 'auto',
             }}
             playsinline={true}
             playing={isMobile ? false : true}
@@ -594,7 +601,7 @@ const VideoWithCaption = ({ video }) => {
             }}
           />
         </PlayerWrapper>
-      </ImageItemContainer>
+      </VideoItemContainer>
 
       <ImageCaptionOffsetContainer>
         <ImageCaptionContainer>
@@ -676,9 +683,6 @@ const PlayerWrapper = styled.div(
   props => ({
     paddingTop: props.isNative ? 0 : `${100 / (1280 / 720)}%`,
   }),
-  mq({
-    marginBottom: [5, 10],
-  }),
 )
 
 const SectionContainer = styled.div(
@@ -713,7 +717,9 @@ const LeftColumnContainer = styled.div({
   flex: 1,
 })
 
-const RightColumnContainer = styled.div({ flex: 2.5 })
+const RightColumnContainer = styled.div({ flex: 2.5 }, props => ({
+  backgroundColor: props.backgroundColor ? props.backgroundColor : 'none',
+}))
 
 const RightColumnForImageContainer = styled(RightColumnContainer)({
   position: 'relative',
@@ -768,8 +774,16 @@ const ImageCaption = styled.div(
 const ImageItemContainer = styled(RightColumnContainer)(
   { display: 'flex' },
   mq({
-    paddingBottom: 5,
-    paddingTop: 5,
+    marginBottom: 5,
+    marginTop: 5,
+  }),
+)
+
+const VideoItemContainer = styled(RightColumnContainer)(
+  { display: 'flex' },
+  mq({
+    marginBottom: [5, 10],
+    marginTop: 5,
   }),
 )
 
